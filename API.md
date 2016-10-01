@@ -2,12 +2,7 @@
 ### 1.1 返回用户ID
 **url**
 ```
-119.29.161.184:8000
-```
-**params**  
-```
-rand : int
-sex : int（0:男, 1:女）
+119.29.161.184:8000?rand=xxx&sex=xxx
 ```
 **response**  
 success:
