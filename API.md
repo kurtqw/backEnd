@@ -3,6 +3,7 @@
 **url**
 ```
 119.29.161.184:8000?rand=xxx&sex=xxx
+*sex 0:male 1:female*
 ```
 **response**  
 success:
