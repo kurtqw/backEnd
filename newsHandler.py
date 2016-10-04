@@ -35,7 +35,7 @@ class NewsHandler(tornado.web.RequestHandler):
                 news['id'] = t[0]
                 news['url'] = t[1]
                 news['title'] = t[2]
-                news['pv'] = t[3]
+                news['visit_cnt'] = t[3]
                 data.append(news)
             self.write(json.dumps({'status': 0, 'data': data}))
         except IndexError as e:

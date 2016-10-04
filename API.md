@@ -37,7 +37,7 @@ success:
 ```
 {
    "status": 0,
-   "data": [{"id":xxx,"url":xxx,"title":xxx,"pv":xxx},...](pv 表示每条热点访问数量)
+   "data": [{"id":xxx,"url":xxx,"title":xxx,"visit_cnt":xxx},...]
 
 ```
 
