@@ -53,6 +53,7 @@ HTTPCACHE_IGNORE_HTTP_CODES = []
 
 # Scrapy-Splash setting
 SPLASH_URL = 'http://127.0.0.1:8050'
+#SPLASH_URL = 'http://119.161.29.184:8050'
 
 DOWNLOADER_MIDDLEWARES = {
     'scrapy_splash.SplashCookiesMiddleware': 723,
@@ -66,8 +67,8 @@ SPIDER_MIDDLEWARES = {
 
 DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
 
-# MYSQL_HOST = '119.29.161.184'
+
 MYSQL_HOST = '0.0.0.0'
 MYSQL_USERNAME = 'root'
 MYSQL_PASSWORD = '123456'
-MYSQL_DB = 'townmeet1'
+MYSQL_DB = 'townmeet'

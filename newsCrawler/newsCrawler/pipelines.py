@@ -16,7 +16,6 @@ class NewsEncodePipeline(object):
     def process_item(self, item, spider):
         item['url'] = item['url'].encode('UTF-8')
         item['title'] = item['title'].encode('UTF-8')
-        item['type'] = item['type'].encode('UTF-8')
         return item
 
 
@@ -38,7 +37,7 @@ class MySQLPipeline(object):
         return cls(host, username, password, db)
 
     def process_item(self, item, spider):
-        self.newsTable.insert(item['url'], item['title'], item['type'])
+        self.newsTable.insert(item['url'], item['title'])
         return item
 
     def open_spider(self, spider):

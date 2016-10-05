@@ -38,9 +38,8 @@ class NewsTable(Table):
                       ' (`id` INT NOT NULL AUTO_INCREMENT,' \
                       '`url` VARCHAR(200)  NOT NULL,' \
                       '`title` TEXT NOT NULL, ' \
-                      '`type` VARCHAR(200) NOT NULL,' \
-                      ' `pv`INT DEFAULT 0,' \
+                      ' `visit_cnt`INT DEFAULT 0,' \
                       '  PRIMARY KEY (id));'
         insert_stmt = 'insert ignore into ' + self.table_name + \
-                      ' values(NULL,%s,%s,%s,0);'
+                      ' values(NULL,%s,%s,0);'
         Table.__init__(self, conn, spider_name, create_stmt, insert_stmt, cache_size, is_created)

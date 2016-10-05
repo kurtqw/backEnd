@@ -7,7 +7,7 @@ from datetime import datetime
 from scrapy_splash import SplashRequest
 
 
-class TencentNews(Spider):
+class NeteaseNews(Spider):
     name = 'netease'
     start_urls = ['http://news.163.com/rank/', 'http://news.163.com', 'http://news.163.com/domestic/',
                   'http://news.163.com/world/',
@@ -30,7 +30,6 @@ class TencentNews(Spider):
         news = ItemLoader(item=NewsItem(), response=response)
         news.add_value('url', response.url)
         news.add_xpath('title', '//head/title/text()')
-        news.add_xpath('type', '//div[@class="post_crumb"]/a[3]/text()')
         yield news.load_item()
 
         for link in self.news_extractor.extract_links(response):

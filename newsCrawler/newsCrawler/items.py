@@ -9,6 +9,3 @@ class NewsItem(Item):
     title = Field(
         output_processor=TakeFirst()
     )
-    type = Field(
-        output_processor=TakeFirst()
-    )
