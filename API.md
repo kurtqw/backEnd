@@ -36,12 +36,12 @@ id : string(用接口1.1返回的ID)
 success:
 ```
 {
-   "status": 0,
+   "status": 1,
    "data": [{"id":xxx,"url":xxx,"title":xxx,"visit_cnt":xxx},...]
 
 ```
 
 fail:
 ```
-{"status": 1, "data": "page exceed limits"}
+{"status": 0, "data": "page exceed limits"}
 ```
