@@ -2,9 +2,9 @@
 ### 1.1 返回用户ID
 **url**
 ```
-119.29.161.184:8000?rand=xxx&sex=xxx
-*sex 0:male 1:female*
+119.29.161.184:8000?rand=xxx&sex=xxx&nameIndex=xxx
 ```
+*sex : 0为male 1为female*  
 **response**  
 success:
 ```
@@ -23,6 +23,31 @@ success:
 id : string(用接口1.1返回的ID)
 ```
 *该接口使用websocket协议*
+
+
+### 1.3 返回昵称
+**url**
+```
+119.29.161.184:8000/name?sex=xxx
+```
+**response**
+```
+{
+  data: {
+      7: "郭芙",
+      11: "李莫愁",
+      16: "李沅芷",
+      24: "方怡",
+      28: "何红药",
+      31: "安小惠",
+      37: "杨不悔",
+      41: "袁紫衣"
+      },
+  status: 1
+}
+```
+*sex : 0为male 1为female*  
+
 
 ### 2. 热点新闻部分
 ### 1.1 返回热点新闻
