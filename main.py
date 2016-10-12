@@ -15,8 +15,27 @@ import tornado.options
 from uuid import uuid4
 from queue import Queue
 from utils import Result
-from newsHandler import NewsHandler
+
 chattingList = {}
+
+class Person(object):
+    def __init__(self, id, sex, nameIndex, callback):
+        '''
+        :param id:
+        :param sex: 0:male,1:female
+        :param callback:
+        :param nameIndex the index of name in name list
+        '''
+        self.id = id
+        self.sex = sex
+        self.nameIndex = nameIndex
+        self.returnId = callback #返回ID给前端的函数
+        if sex == '0':
+            self.name = Application.maleNames[int(nameIndex)]
+        else:
+            self.name = Application.femaleNames[int(nameIndex)]
+
+
 
 class Message(object):
     def __init__(self,sender, data):
@@ -25,21 +44,27 @@ class Message(object):
         self.content = data.get('text')
         self.time = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime())
     def response(self):
-        return self.time + "\n" + self.sender+"\t" + self.content
+        res = Result()
+        data = dict()
+        data["sender"] = self.sender
+        data["type"] = self.type
+        data["content"] = self.content
+        data["time"] = self.time
+
+        res.setData(data)
+        return res.getRes()
 
 
 class Chat(object):
-    def __init__(self, id1, id2, nameIndex1, nameIndex2):
-        self.id1 = id1
-        self.id2 = id2
-        self.nameIndex1 = nameIndex1
-        self.nameIndex2 = nameIndex2
+    def __init__(self, person1, person2):
+        self.person1 = person1
+        self.person2 = person2
         self.isClose = False #是否有人退出
         self.messageRecord = []
     def register(self,id,handler):
-        if id == self.id1:
+        if id == self.person1.id:
             self.handler1 = handler
-        elif id == self.id2:
+        elif id == self.person2.id:
             self.handler2 = handler
         else:
             print("Error")
@@ -50,12 +75,12 @@ class Chat(object):
         :param data:
         :return:
         '''
-        if data.get('id') == self.id1:
-            message = Message(Application.femaleNames[int(self.nameIndex1)],data)
+        if data.get('id') == self.person1.id:
+            message = Message(self.person1.name, data)
             self.messageRecord.append(message)
             self.handler2.write_message(message.response())
-        elif data.get('id') == self.id2:
-            message = Message(Application.maleNames[int(self.nameIndex2)],data)
+        elif data.get('id') == self.person2.id:
+            message = Message(self.person2.name, data)
             self.messageRecord.append(message)
             self.handler1.write_message(message.response())
         else:
@@ -68,7 +93,7 @@ class Chat(object):
         :param id:主动断开的一方的ID
         :return:
         '''
-        if chattingList[id].id1 == id:
+        if chattingList[id].person1.id == id:
             chattingList[id].handler2.write_message("对方已断开")
             chattingList[id].handler2.close()
         else:
@@ -83,49 +108,47 @@ class Waiter(object):
            性别区分
 
     '''
-    maleWaiting = Queue()
-    maleCallbacks = Queue()
-    maleNameIndex = Queue()
-    femaleWaiting = Queue()
-    femaleCallbacks = Queue()
-    femaleNameIndex = Queue()
-    def match(self, id, sex, nameIndex, callback):
+    malesWaiting = Queue()
+    femalesWaiting = Queue()
+    def match(self, person):
+
+        if person.sex == '0':
+            self.malesWaiting.put(person)
+            if  self.femalesWaiting.qsize() > 0:
+                self.notify(2)
+            elif self.malesWaiting.qsize() > 1:
+                self.notify(0)
+        else:
+            self.femalesWaiting.put(person)
+            if self.malesWaiting.qsize() > 0:
+                self.notify(2)
+            elif self.femalesWaiting.qsize() > 1:
+                self.notify(1)
+    def notify(self, matchType):
         '''
-        :param id:
-        :param sex: 0:male,1:female
-        :param callback:
-        :param nameIndex the index of name in name list
+        :param matchType: 0(both male)  1(both female) 2(opposite)
         :return:
         '''
-        if sex == '0':
-            self.maleWaiting.put(id)
-            self.maleCallbacks.put(callback)
-            self.maleNameIndex.put(nameIndex)
-            if  self.femaleWaiting.qsize() > 0:
-                self.notify()
+        if matchType == 0:
+            person1 = self.malesWaiting.get()
+            person2 = self.malesWaiting.get()
+        elif matchType == 1:
+            person1 = self.femalesWaiting.get()
+            person2 = self.femalesWaiting.get()
         else:
-            self.femaleWaiting.put(id)
-            self.femaleCallbacks.put(callback)
-            self.femaleNameIndex.put(nameIndex)
-            if self.maleWaiting.qsize() > 0:
-                self.notify()
-    def notify(self):
-        id1 = self.femaleWaiting.get()
-        id2 = self.maleWaiting.get()
-        nameIndex1 = self.femaleNameIndex.get()
-        nameIndex2 = self.maleNameIndex.get()
-        print(id1,id2)
-        callback1 = self.femaleCallbacks.get()
-        callback2 = self.maleCallbacks.get()
-        callback1(id1)
-        callback2(id2)
-        chat = Chat(id1, id2, nameIndex1, nameIndex2)
-        chattingList[id1] = chat
-        chattingList[id2] = chat
+            person1 = self.femalesWaiting.get()
+            person2 = self.malesWaiting.get()
+        person1.returnId(person2.id)
+        person2.returnId(person1.id)
+        chat = Chat(person1, person2)
+        chattingList[person1.id] = chat
+        chattingList[person2.id] = chat
+        print(person1.id, person2.id)
 
 
 
-class MainHandler(tornado.web.RequestHandler):
+
+class MatchHandler(tornado.web.RequestHandler):
     idSet = set()
     @tornado.web.asynchronous
     def get(self):
@@ -134,9 +157,9 @@ class MainHandler(tornado.web.RequestHandler):
             id = str(uuid4())
         self.idSet.add(id)
         sex = self.get_argument('sex')
-        print(sex)
         nameIndex = self.get_argument("nameIndex")
-        self.application.waiter.match(id, sex, nameIndex, self.returnId)
+        person = Person(id, sex, nameIndex, self.returnId)
+        self.application.waiter.match(person)
     def set_default_headers(self):
         #跨域
         self.set_header('Access-Control-Allow-Origin', "null")
@@ -151,11 +174,11 @@ class MainHandler(tornado.web.RequestHandler):
 
 
 
+
 class ChatHandler(tornado.websocket.WebSocketHandler):
     def open(self):
-        self.id = self.get_argument("id",-1)
-        chattingList[self.id].register(self.id,self)
-
+        self.id = self.get_argument("id")
+        chattingList[self.id].register(self.id, self)
     def on_message(self, data):
         chattingList[self.id].recMessage(json.loads(data))
 
@@ -195,10 +218,9 @@ class Application(tornado.web.Application):
         self.waiter = Waiter()
         self.readNames()
         handlers = [
-            (r"/",MainHandler),
+            (r"/",MatchHandler),
             (r"/chat",ChatHandler),
-            (r"/name", NameHandler),
-            (r"/news", NewsHandler)
+            (r"/name", NameHandler)
         ]
         super(Application,self).__init__(handlers)
     def readNames(self):
