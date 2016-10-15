@@ -5,9 +5,9 @@ import tornado.web
 
 class Result(object):
     def __init__(self):
-        self.res = {"status" : 0, "data": None}
+        self.res = {"status" : 0, "res": None}
     def setData(self, data):
-        self.res["data"] = data
+        self.res["res"] = data
         self.res["status"] = 1
     def getRes(self):
         return self.res
