@@ -23,6 +23,14 @@ class NewsHandler(tornado.web.RequestHandler):
         self.res = self.cur.fetchall()
         super(NewsHandler, self).__init__(application, request, **kargs)
 
+    def set_default_headers(self):
+        # 跨域
+        self.set_header('Access-Control-Allow-Origin', "null")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header('Access-Control-Max-Age', 1000)
+        self.set_header('Access-Control-Allow-Headers', '*')
+        self.set_header('Access-Control-Allow-Credentials', "true")
+
     def get(self):
         page = int(self.get_argument("page", 1))
         try:
