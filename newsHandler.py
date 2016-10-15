@@ -14,9 +14,9 @@ class NewsHandler(tornado.web.RequestHandler):
         password = parser['CONFIG']['PASSWORD']
         db = parser['CONFIG']['DB']
 
-        self.conn = pymysql.connect(host, username, password, db,charset='utf8')
+        self.conn = pymysql.connect(host, username, password, db, charset='utf8')
         self.cur = self.conn.cursor()
-        self.select_stmt = 'select * from news order by pv desc'
+        self.select_stmt = 'select * from news order by visit_cnt desc'
         self.size = self.cur.execute(self.select_stmt)
         l = list(range(0, self.size, 9))
         self.index = list(zip(l, l[1:]))
@@ -33,6 +33,8 @@ class NewsHandler(tornado.web.RequestHandler):
 
     def get(self):
         page = int(self.get_argument("page", 1))
+        print('page:　')
+        print(page)
         try:
             head = self.index[page - 1][0]
             tail = self.index[page - 1][1]
@@ -50,7 +52,7 @@ class NewsHandler(tornado.web.RequestHandler):
             self.write(json.dumps({'status': 1, 'data': 'page exceed limits'}))
 
         '''
-        TODO 更新热点的pv数
+        TODO 更新热点的visit_cnt数
         '''
 
 # if __name__ == '__main__':

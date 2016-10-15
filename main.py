@@ -2,6 +2,7 @@
 import random
 import time
 import tornado.ioloop
+from newsHandler import NewsHandler
 import tornado.web
 import tornado.httpserver
 import tornado.options
@@ -18,6 +19,7 @@ from utils import Result
 
 chattingList = {}
 
+
 class Person(object):
     def __init__(self, id, sex, nameIndex, callback):
         '''
@@ -29,20 +31,20 @@ class Person(object):
         self.id = id
         self.sex = sex
         self.nameIndex = nameIndex
-        self.returnId = callback #返回ID给前端的函数
+        self.returnId = callback  # 返回ID给前端的函数
         if sex == '0':
             self.name = Application.maleNames[int(nameIndex)]
         else:
             self.name = Application.femaleNames[int(nameIndex)]
 
 
-
 class Message(object):
-    def __init__(self,sender, data):
+    def __init__(self, sender, data):
         self.sender = sender
         self.type = data.get('type')
         self.content = data.get('text')
-        self.time = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime())
+        self.time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
     def response(self):
         res = Result()
         data = dict()
@@ -59,15 +61,17 @@ class Chat(object):
     def __init__(self, person1, person2):
         self.person1 = person1
         self.person2 = person2
-        self.isClose = False #是否有人退出
+        self.isClose = False  # 是否有人退出
         self.messageRecord = []
-    def register(self,id,handler):
+
+    def register(self, id, handler):
         if id == self.person1.id:
             self.handler1 = handler
         elif id == self.person2.id:
             self.handler2 = handler
         else:
             print("Error")
+
     def recMessage(self, data):
         '''
         收到一方的消息，将其发给另外一方
@@ -101,7 +105,6 @@ class Chat(object):
             chattingList[id].handler1.close()
 
 
-
 class Waiter(object):
     '''
     TODO : 保存聊天记录
@@ -110,11 +113,12 @@ class Waiter(object):
     '''
     malesWaiting = Queue()
     femalesWaiting = Queue()
+
     def match(self, person):
 
         if person.sex == '0':
             self.malesWaiting.put(person)
-            if  self.femalesWaiting.qsize() > 0:
+            if self.femalesWaiting.qsize() > 0:
                 self.notify(2)
             elif self.malesWaiting.qsize() > 1:
                 self.notify(0)
@@ -124,6 +128,7 @@ class Waiter(object):
                 self.notify(2)
             elif self.femalesWaiting.qsize() > 1:
                 self.notify(1)
+
     def notify(self, matchType):
         '''
         :param matchType: 0(both male)  1(both female) 2(opposite)
@@ -146,10 +151,9 @@ class Waiter(object):
         print(person1.id, person2.id)
 
 
-
-
 class MatchHandler(tornado.web.RequestHandler):
     idSet = set()
+
     @tornado.web.asynchronous
     def get(self):
         id = str(uuid4())
@@ -160,25 +164,25 @@ class MatchHandler(tornado.web.RequestHandler):
         nameIndex = self.get_argument("nameIndex")
         person = Person(id, sex, nameIndex, self.returnId)
         self.application.waiter.match(person)
+
     def set_default_headers(self):
-        #跨域
+        # 跨域
         self.set_header('Access-Control-Allow-Origin', "null")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
         self.set_header('Access-Control-Max-Age', 1000)
         self.set_header('Access-Control-Allow-Headers', '*')
-        self.set_header('Access-Control-Allow-Credentials',"true")
+        self.set_header('Access-Control-Allow-Credentials', "true")
 
     def returnId(self, id):
-        self.write(json.dumps({'status':1,'id':id}))#
+        self.write(json.dumps({'status': 1, 'id': id}))  #
         self.finish()
-
-
 
 
 class ChatHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         self.id = self.get_argument("id")
         chattingList[self.id].register(self.id, self)
+
     def on_message(self, data):
         chattingList[self.id].recMessage(json.loads(data))
 
@@ -189,40 +193,45 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
             chattingList[self.id].notifyClose(self.id)
         else:
             print("另一方也退出")
+
     def check_origin(self, origin):
         return True
+
 
 class NameHandler(tornado.web.RequestHandler):
     def get(self):
         res = Result()
         names = {}
         sex = self.get_argument("sex")
-        if sex == "0":#male
-            for i in range(8):#一次返回8个名字
-                index = random.randint(0, len(Application.maleNames)-1)
+        if sex == "0":  # male
+            for i in range(8):  # 一次返回8个名字
+                index = random.randint(0, len(Application.maleNames) - 1)
                 while index in names.keys():
-                    index = random.randint(0, len(Application.maleNames)-1)
+                    index = random.randint(0, len(Application.maleNames) - 1)
                 names[index] = Application.maleNames[index]
 
         else:
-            for i in range(8):#一次返回8个名字
-                index = random.randint(0, len(Application.femaleNames)-1)
+            for i in range(8):  # 一次返回8个名字
+                index = random.randint(0, len(Application.femaleNames) - 1)
                 while index in names.keys():
-                    index = random.randint(0, len(Application.femaleNames)-1)
+                    index = random.randint(0, len(Application.femaleNames) - 1)
                 names[index] = Application.femaleNames[index]
         res.setData(names)
         self.write(res.getRes())
+
 
 class Application(tornado.web.Application):
     def __init__(self):
         self.waiter = Waiter()
         self.readNames()
         handlers = [
-            (r"/",MatchHandler),
-            (r"/chat",ChatHandler),
-            (r"/name", NameHandler)
+            (r"/", MatchHandler),
+            (r"/chat", ChatHandler),
+            (r"/name", NameHandler),
+            (r"/news", NewsHandler)
         ]
-        super(Application,self).__init__(handlers)
+        super(Application, self).__init__(handlers)
+
     def readNames(self):
         Application.maleNames = []
         with open("maleNameList") as male:
@@ -236,6 +245,7 @@ class Application(tornado.web.Application):
             while line:
                 Application.femaleNames.append(line.strip("\n"))
                 line = female.readline()
+
 
 if __name__ == '__main__':
     tornado.options.parse_command_line()
