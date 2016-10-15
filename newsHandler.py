@@ -25,11 +25,11 @@ class NewsHandler(tornado.web.RequestHandler):
 
     def set_default_headers(self):
         # 跨域
-        self.set_header('Access-Control-Allow-Origin', "null")
+        self.set_header('Access-Control-Allow-Origin', "*")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
         self.set_header('Access-Control-Max-Age', 1000)
         self.set_header('Access-Control-Allow-Headers', '*')
-        self.set_header('Access-Control-Allow-Credentials', "true")
+        #self.set_header('Access-Control-Allow-Credentials', "true")
 
     def get(self):
         page = int(self.get_argument("page", 1))
