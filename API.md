@@ -13,6 +13,7 @@ success:
   "id":"xsijfa-r21ja2j-asoj2aa-adh2saj"
 }
 ```
+
 ### 1.2 聊天
 **url**
 ```
@@ -22,6 +23,30 @@ success:
 ```
 id : string(用接口1.1返回的ID)
 ```
+**request**
+```
+{
+  "type":"xxxx",
+  "text":"xxxxxxx",
+  "id":"xxxxxx-xxxx-xxxxx"
+}
+```
+
+**response**
+```
+{
+  "res":{
+    "sender":"xxx",
+    "type":"xxx",
+    "content":"",
+    "time":"2016-10-16  13:45:20"
+  },
+  "status":1
+}
+
+```
+
+
 *该接口使用websocket协议*
 
 
@@ -33,7 +58,7 @@ id : string(用接口1.1返回的ID)
 **response**
 ```
 {
-  data: {
+  res: {
       7: "郭芙",
       11: "李莫愁",
       16: "李沅芷",
