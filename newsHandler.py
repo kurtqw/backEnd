@@ -25,11 +25,20 @@ class NewsHandler(tornado.web.RequestHandler):
 
     def set_default_headers(self):
         # 跨域
-        self.set_header('Access-Control-Allow-Origin', "null")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-        self.set_header('Access-Control-Max-Age', 1000)
-        self.set_header('Access-Control-Allow-Headers', '*')
-        self.set_header('Access-Control-Allow-Credentials', "true")
+        #self.set_header('Access-Control-Allow-Origin', r'^(https?://(?:.+\.)?localhost(?::\d{1,5})?)$')
+        #self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        #self.set_header('Access-Control-Max-Age', 1000)
+        #self.set_header('Access-Control-Allow-Headers', '*')
+        self.set_header('Access-Control-Allow-Credentials', "false")
+
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Credentials", "true")
+        self.set_header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
+        self.set_header("Access-Control-Allow-Headers",
+                        "Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, X-Requested-By, If-Modified-Since, X-File-Name, Cache-Control")
+
+    def check_origin(self, origin):
+        return True
 
     def get(self):
         page = int(self.get_argument("page", 1))
