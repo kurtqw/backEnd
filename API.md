@@ -49,11 +49,11 @@ id : string(用接口1.1返回的ID)
 *sex : 0为male 1为female*  
 
 
-### 2. 热点新闻部分
+### 2. 热点新闻和笑话部分
 ### 1.1 返回热点新闻
 **url**
 ```
-119.29.161.184:8000?page=xxx
+119.29.161.184:8000/news?page=xxx
 (page表示第几页，从 1 开始计数，每页返回十条热点新闻,按照 pv 进行降序排列)
 ```
 
@@ -69,4 +69,63 @@ success:
 fail:
 ```
 {"status": 0, "data": "page exceed limits"}
+```
+
+### 1.2 热点新闻访问量更新 (未实现)
+**url**
+```
+119.29.161.184:8000/news (post)
+
+数据格式：
+{
+    "id":XXX
+}
+```
+
+**response**
+success:
+```
+{
+   "status":1
+}
+```
+
+fail:
+```
+{
+  "status":0,
+   "data":"XXX" (给出失败原因)
+}
+```
+   
+
+### 1.3 返回笑话 (未实现)
+**url**
+```
+119.29.161.184:8000/joke?num=XXX
+(返回 num 个笑话)
+```
+
+**response**
+success:
+```
+{
+   "status":1,
+   "data":[
+        {"id":"XXX",
+         "content":"XXX"
+        },
+        {
+        ...
+        }
+        ...
+        ]
+}
+```
+fail:
+```
+{
+   "status":0,
+   "data":"XXX"
+}
 ```
