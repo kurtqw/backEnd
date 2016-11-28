@@ -3,6 +3,8 @@ import tornado.web
 import pymysql
 import json
 import configparser
+import json
+import traceback
 
 
 class NewsHandler(tornado.web.RequestHandler):
@@ -60,13 +62,38 @@ class NewsHandler(tornado.web.RequestHandler):
                 news['title'] = t[2]
                 news['visit_cnt'] = t[3]
                 data.append(news)
-            self.write(json.dumps({'status': 0, 'data': data}))
+            self.write(json.dumps({'status': 1, 'data': data}))
         except IndexError as e:
-            self.write(json.dumps({'status': 1, 'data': 'page exceed limits'}))
+            self.write(json.dumps({'status': 0, 'data': 'page exceed limits'}))
 
-        '''
-        TODO 更新热点的visit_cnt数
-        '''
+    def post(self, *args, **kwargs):
+        try:
+            if isinstance(self.request.body, bytes):
+                body = self.request.body.decode('utf-8')
+                request_body = json.loads(body)
+            else:
+                request_body = json.loads(self.request.body)
+            news_id = request_body['news_id']
+            cnt_new = int(request_body['cnt'])
+            status = self.cur.execute('select visit_cnt from news where news_id=%s', news_id)
+            if status == 0:
+                self.write(json.dumps({'status': 0, 'data': 'wrong news_id'}))
+                return
+            else:
+                cnt_old = self.cur.fetchone()[0]
+            cnt_new = cnt_new + cnt_old
+            update_stmt = "update news set visit_cnt =%s where news_id=%s;"
+            status = self.cur.execute(update_stmt, [str(cnt_new), news_id])
+            if status == 0:
+                self.write(json.dumps({'status': 0, 'data': 'update failed'}))
+                return
+            self.conn.commit()
+            self.write(json.dumps({'status': 1}))
+        except Exception as e:
+            traceback.print_exc()
+            self.write(json.dumps({'status': 0, 'data': 'decode json failed'}))
+
+class
 
 # if __name__ == '__main__':
 #    n = NewsHandler()
