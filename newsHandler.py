@@ -93,7 +93,49 @@ class NewsHandler(tornado.web.RequestHandler):
             traceback.print_exc()
             self.write(json.dumps({'status': 0, 'data': 'decode json failed'}))
 
-class
+
+class JokeHanlder(tornado.web.RequestHandler):
+    def __init__(self, application, request, **kargs):
+        parser = configparser.ConfigParser()
+        parser.read('mysql.ini')
+        host = parser['CONFIG']['HOST']
+        username = parser['CONFIG']['USERNAME']
+        password = parser['CONFIG']['PASSWORD']
+        db = parser['CONFIG']['DB']
+
+        self.conn = pymysql.connect(host, username, password, db, charset='utf8')
+        self.cur = self.conn.cursor()
+        self.select_stmt = 'select content from joke'
+        super(JokeHanlder, self).__init__(application, request, **kargs)
+
+    def set_default_headers(self):
+        self.set_header('Access-Control-Allow-Credentials', "false")
+
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Credentials", "true")
+        self.set_header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
+        self.set_header("Access-Control-Allow-Headers",
+                        "Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, X-Requested-By, If-Modified-Since, X-File-Name, Cache-Control")
+
+    def check_origin(self, origin):
+        self.set_header('Access-Control-Allow-Origin', "*")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header('Access-Control-Max-Age', 1000)
+        self.set_header('Access-Control-Allow-Headers', '*')
+
+    def get(self):
+        """
+        :return: 随机返回一个笑话
+        """
+        status = self.cur.execute(self.select_stmt)
+        items = self.cur.fetchall()
+        if len(items) == 0:
+            self.write(json.dumps({'status': 0, 'data': 'Not enough jokes'}))
+            return
+        import random
+        rand_index = random.randrange(0, len(items) - 1)
+        print(items[rand_index][0])
+        self.write(json.dumps({'status': 1,'data':items[rand_index][0]}))
 
 # if __name__ == '__main__':
 #    n = NewsHandler()

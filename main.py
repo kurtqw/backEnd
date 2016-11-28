@@ -2,7 +2,7 @@
 import random
 import time
 import tornado.ioloop
-from newsHandler import NewsHandler
+from newsHandler import NewsHandler, JokeHanlder
 import tornado.web
 import tornado.httpserver
 import tornado.options
@@ -171,7 +171,7 @@ class MatchHandler(tornado.web.RequestHandler):
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
         self.set_header('Access-Control-Max-Age', 1000)
         self.set_header('Access-Control-Allow-Headers', '*')
-        #self.set_header('Access-Control-Allow-Credentials', "true")
+        # self.set_header('Access-Control-Allow-Credentials', "true")
 
     def returnId(self, id):
         self.write(json.dumps({'status': 1, 'id': id}))  #
@@ -205,7 +205,8 @@ class NameHandler(tornado.web.RequestHandler):
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
         self.set_header('Access-Control-Max-Age', 1000)
         self.set_header('Access-Control-Allow-Headers', '*')
-        #self.set_header('Access-Control-Allow-Credentials', "true")
+        # self.set_header('Access-Control-Allow-Credentials', "true")
+
     def get(self):
         res = Result()
         names = {}
@@ -235,7 +236,8 @@ class Application(tornado.web.Application):
             (r"/", MatchHandler),
             (r"/chat", ChatHandler),
             (r"/name", NameHandler),
-            (r"/news", NewsHandler)
+            (r"/news", NewsHandler),
+            (r"/joke", JokeHanlder)
         ]
         super(Application, self).__init__(handlers)
 
