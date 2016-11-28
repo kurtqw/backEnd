@@ -14,7 +14,7 @@ CREATE TABLE chat_history (
   PRIMARY KEY (id)
 );
 CREATE TABLE news (
-  `news_id`   INT          NOT NULL,
+  `news_id`   INT          NOT NULL AUTO_INCREMENT,
   `url`       VARCHAR(250) NOT NULL,
   `title`     VARCHAR(250) NOT NULL,
   `visit_cnt` INT DEFAULT 0,
