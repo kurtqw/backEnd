@@ -22,18 +22,16 @@ class NeteaseNewsSpider(object):
         self.table = JokeTable(self.conn, 'qiushibaike', 1, False)
 
     def parse(self):
-        url = 'http://www.qiushibaike.com/'
-        self.driver.get(url)
+        url = 'http://www.qiushibaike.com/text/page/%d/?s=4934451'
         i = 1
-        while i < 35:
-            i += 1
+        while i < 36:
+            joke_url = url % i
+            self.driver.get(joke_url)
+            print(joke_url)
             joke_items = self.driver.find_elements_by_xpath("//*[@id]/a[1]/div/span")
             for item in joke_items:
                 self.table.insert(item.text)
-            try:
-                self.driver.find_element_by_xpath('//*[@id="content-left"]/ul/li[8]/a/span').click()
-            except Exception as e:
-                self.driver.save_screenshot('fuck.png')
+            i += 1
 
     def __del__(self):
         self.conn.commit()
