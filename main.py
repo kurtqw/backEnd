@@ -36,13 +36,13 @@ class Application(tornado.web.Application):
 
     def readNames(self):
         self.maleNames = []
-        with open("maleNameList") as male:
+        with open("./nameList/maleNameList") as male:
             line = male.readline()
             while line:
                 self.maleNames.append(line.strip("\n"))
                 line = male.readline()
         self.femaleNames = []
-        with open("femaleNameList") as female:
+        with open("./nameList/femaleNameList") as female:
             line = female.readline()
             while line:
                 self.femaleNames.append(line.strip("\n"))
