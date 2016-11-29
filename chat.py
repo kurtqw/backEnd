@@ -186,7 +186,8 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
         chattingList[self.id].recMessage(json.loads(data))
 
     def on_close(self):
-        if not chattingList[self.id].isClose:
+
+        if self.id in chattingList.keys() and not chattingList[self.id].isClose:
             print("一方退出")
             chattingList[self.id].isClose = True
             chattingList[self.id].notifyClose(self.id)
