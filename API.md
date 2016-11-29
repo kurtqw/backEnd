@@ -73,7 +73,7 @@ id : string(用接口1.1返回的ID)
 ```
 *sex : 0为male 1为female*
 
-### 1.4 返回昵称
+### 1.4 返回对方昵称
 **url**
 ```
 119.29.161.184:8000/othername?id=xxx
@@ -86,6 +86,50 @@ id : string(用接口1.1返回的ID)
 }
 ```
 
+
+### 1.2 群聊
+**url**
+```
+119.29.161.184:8000/groupchat?topic=泡馆&rand=xxxx
+```
+**params**
+```
+rand : 随机数
+```
+**request**
+```
+{
+  "type":"xxxx",
+  "text":"xxxxxxx",
+  "id":"xxxxxx-xxxx-xxxxx"
+}
+```
+
+**response**
+```
+websocket建立连接后：
+{
+  "id":"xxxxxx-xxxx-xxxxx",
+  "status" : 1,
+  "name" : "就是个名字",
+
+}
+
+聊天进行时：
+{
+  "res":{
+    "sender":"xxx",
+    "type":"xxx",
+    "content":"",
+    "time":"2016-10-16  13:45:20"
+  },
+  "status":1
+}
+
+```
+
+
+*该接口使用websocket协议*
 
 ### 2. 热点新闻和笑话部分
 ### 1.1 返回热点新闻

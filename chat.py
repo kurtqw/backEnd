@@ -41,6 +41,7 @@ class Person(object):
 
 class Message(object):
     def __init__(self, sender, data):
+        #发送该消息的人
         self.sender = sender
         self.type = data.get('type')
         self.content = data.get('text')
@@ -197,6 +198,7 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
 
     def check_origin(self, origin):
         return True
+
 class OtherNameHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         # 跨域
@@ -214,15 +216,6 @@ class OtherNameHandler(tornado.web.RequestHandler):
             else:
                 res.setData(chattingList[id].person1.name)
         self.write(res)
-
-class GroupChatHandler(tornado.websocket.WebSocketHandler):
-    groupIdSet = set()
-    def open(self):
-        self.topic = self.get_argument("topic")
-
-
-
-
 
 class NameHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
@@ -253,4 +246,9 @@ class NameHandler(tornado.web.RequestHandler):
                 names[index] = self.application.femaleNames[index]
         res.setData(names)
         self.write(res.getRes())
+
+
+
+
+
 
