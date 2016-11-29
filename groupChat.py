@@ -18,6 +18,12 @@ GROUP_CHAT_RECORD_SIZE = 20
 
 
 class GroupChatHandler(tornado.websocket.WebSocketHandler):
+    def set_default_headers(self):
+        # 跨域
+        self.set_header('Access-Control-Allow-Origin', "*")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header('Access-Control-Max-Age', 1000)
+        self.set_header('Access-Control-Allow-Headers', '*')
     def check_origin(self, origin):
         return True
 
