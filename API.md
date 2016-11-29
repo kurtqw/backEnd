@@ -10,7 +10,8 @@ success:
 ```
 {
   "status":1,
-  "id":"xsijfa-r21ja2j-asoj2aa-adh2saj"
+  "id":"xsijfa-r21ja2j-asoj2aa-adh2saj",
+  "anotherName":"就是个名字"
 }
 ```
 
@@ -71,7 +72,7 @@ id : string(用接口1.1返回的ID)
   status: 1
 }
 ```
-*sex : 0为male 1为female*  
+*sex : 0为male 1为female*
 
 
 ### 2. 热点新闻和笑话部分

@@ -47,6 +47,7 @@ class Application(tornado.web.Application):
             while line:
                 self.femaleNames.append(line.strip("\n"))
                 line = female.readline()
+        self.allNames = self.maleNames + self.femaleNames
 
 
 if __name__ == '__main__':

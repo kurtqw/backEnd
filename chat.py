@@ -175,7 +175,11 @@ class MatchHandler(tornado.web.RequestHandler):
         #self.set_header('Access-Control-Allow-Credentials', "true")
 
     def returnId(self, id):
-        self.write(json.dumps({'status': 1, 'id': id}))  #
+        if id == chattingList[id].person1.id:
+            anotherName = chattingList[id].person2.name
+        else:
+            anotherName = chattingList[id].person1.name
+        self.write(json.dumps({'status': 1, 'id': id, 'anotherName': anotherName}))  #
         self.finish()
 
 
@@ -199,6 +203,15 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
         return True
 
 
+class GroupChatHandler(tornado.websocket.WebSocketHandler):
+    groupIdSet = set()
+    def open(self):
+        self.topic = self.get_argument("topic")
+
+
+
+
+
 class NameHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         # 跨域
@@ -211,14 +224,16 @@ class NameHandler(tornado.web.RequestHandler):
         res = Result()
         names = {}
         sex = self.get_argument("sex")
-        if sex == "0":  # male
+        if sex == "0":
+            # male
             for i in range(8):  # 一次返回8个名字
                 index = random.randint(0, len(self.application.maleNames) - 1)
                 while index in names.keys():
                     index = random.randint(0, len(self.application.maleNames) - 1)
                 names[index] = self.application.maleNames[index]
 
-        else:
+        elif sex == "1":
+            # female
             for i in range(8):  # 一次返回8个名字
                 index = random.randint(0, len(self.application.femaleNames) - 1)
                 while index in names.keys():
