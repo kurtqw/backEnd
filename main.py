@@ -4,7 +4,7 @@ import time
 import tornado.ioloop
 from newsHandler import NewsHandler, JokeHanlder
 from chat import Waiter
-from chat import MatchHandler, ChatHandler, NameHandler
+from chat import MatchHandler, ChatHandler, NameHandler, OtherNameHandler
 import tornado.web
 import tornado.httpserver
 import tornado.options
@@ -29,6 +29,7 @@ class Application(tornado.web.Application):
             (r"/", MatchHandler),
             (r"/chat", ChatHandler),
             (r"/name", NameHandler),
+            (r"/othername", OtherNameHandler),
             (r"/news", NewsHandler),
             (r"/joke", JokeHanlder)
         ]

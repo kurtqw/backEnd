@@ -197,7 +197,23 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
 
     def check_origin(self, origin):
         return True
-
+class OtherNameHandler(tornado.websocket.WebSocketHandler):
+    def set_default_headers(self):
+        # 跨域
+        self.set_header('Access-Control-Allow-Origin', "*")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header('Access-Control-Max-Age', 1000)
+        self.set_header('Access-Control-Allow-Headers', '*')
+        #self.set_header('Access-Control-Allow-Credentials', "true")
+    def get(self):
+        id = self.get_argument("id")
+        res = Result()
+        if id in chattingList.keys():
+            if id == chattingList[id].person1.id:
+                res.setData(chattingList[id].person2.name)
+            else:
+                res.setData(chattingList[id].person1.name)
+        self.write(res)
 
 class GroupChatHandler(tornado.websocket.WebSocketHandler):
     groupIdSet = set()
