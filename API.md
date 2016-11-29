@@ -11,7 +11,6 @@ success:
 {
   "status":1,
   "id":"xsijfa-r21ja2j-asoj2aa-adh2saj",
-  "anotherName":"就是个名字"
 }
 ```
 

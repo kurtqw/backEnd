@@ -175,11 +175,7 @@ class MatchHandler(tornado.web.RequestHandler):
         #self.set_header('Access-Control-Allow-Credentials', "true")
 
     def returnId(self, id):
-        if id == chattingList[id].person1.id:
-            anotherName = chattingList[id].person2.name
-        else:
-            anotherName = chattingList[id].person1.name
-        self.write(json.dumps({'status': 1, 'id': id, 'anotherName': anotherName}))  #
+        self.write(json.dumps({'status': 1, 'id': id}))  #
         self.finish()
 
 
