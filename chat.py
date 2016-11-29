@@ -219,10 +219,10 @@ class OtherNameHandler(tornado.web.RequestHandler):
         res = Result()
         if id in chattingList.keys():
             if id == chattingList[id].person1.id:
-                res.setData(chattingList[id].person2.name)
+                res.setData(json.dumps({'other':chattingList[id].person1.name,'mine':chattingList[id].person2.name}))
             else:
-                res.setData(chattingList[id].person1.name)
-        self.write(res)
+                res.setData(json.dumps({'other':chattingList[id].person2.name,'mine':chattingList[id].person1.name}))
+        self.write(res.getRes())
 
 class NameHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
