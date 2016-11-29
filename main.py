@@ -17,7 +17,8 @@ class Application(tornado.web.Application):
         self.waiter = Waiter()
         self.readNames()
         self.groupChats = {}
-        groupIdSet = set()
+        self.idSet = set()
+        self.groupIdSet = set()
         handlers = [
             (r"/", MatchHandler),
             (r"/chat", ChatHandler),

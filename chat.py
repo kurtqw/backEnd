@@ -109,16 +109,13 @@ class Chat(object):
 
 class Waiter(object):
     '''
-    TODO : 保存聊天记录
-           性别区分
-
     '''
     malesWaiting = Queue()
     femalesWaiting = Queue()
 
     def match(self, person):
 
-        if person.sex == '0':
+        if person.sex == '0': #male
             self.malesWaiting.put(person)
             if self.femalesWaiting.qsize() > 0:
                 self.notify(2)
@@ -154,14 +151,14 @@ class Waiter(object):
 
 
 class MatchHandler(tornado.web.RequestHandler):
-    idSet = set()
+
 
     @tornado.web.asynchronous
     def get(self):
         id = str(uuid4())
-        while id in self.idSet:
+        while id in self.application.idSet:
             id = str(uuid4())
-        self.idSet.add(id)
+        self.application.idSet.add(id)
         sex = self.get_argument('sex')
         nameIndex = self.get_argument("nameIndex")
         person = Person(id, sex, nameIndex, self.returnId, self.application)
@@ -193,6 +190,15 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
             print("一方退出")
             chattingList[self.id].isClose = True
             chattingList[self.id].notifyClose(self.id)
+            if chattingList[self.id].person1.id == self.id:
+                anotherId = chattingList[self.id].person2.id
+            else:
+                anotherId = chattingList[self.id].person1.id
+            self.application.idSet.remove(self.id)
+            self.application.idSet.remove(anotherId)
+            chattingList.pop(self.id)
+            chattingList.pop(anotherId)
+
         else:
             print("另一方也退出")
 
