@@ -73,7 +73,7 @@ id : string(用接口1.1返回的ID)
 ```
 *sex : 0为male 1为female*
 
-### 1.4 返回对方昵称
+### 1.5 返回对方昵称
 **url**
 ```
 119.29.161.184:8000/othername?id=xxx
@@ -81,13 +81,13 @@ id : string(用接口1.1返回的ID)
 **response**
 ```
 {
-  res: "郭芙",
+  res:{'mine': "郭芙",'other':"对面那个"}
   status: 1
 }
 ```
 
 
-### 1.2 群聊
+### 1.6 群聊
 **url**
 ```
 119.29.161.184:8000/groupchat?topic=泡馆&rand=xxxx
