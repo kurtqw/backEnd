@@ -197,7 +197,7 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
 
     def check_origin(self, origin):
         return True
-class OtherNameHandler(tornado.websocket.WebSocketHandler):
+class OtherNameHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         # 跨域
         self.set_header('Access-Control-Allow-Origin', "*")
