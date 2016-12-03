@@ -9,21 +9,12 @@ from chat import Message
 
 import tornado.httpclient
 import tornado.websocket
-import tornado.web
-import tornado.httpserver
-import tornado.ioloop
 import tornado.options
 
 GROUP_CHAT_RECORD_SIZE = 20
 
 
 class GroupChatHandler(tornado.websocket.WebSocketHandler):
-    def set_default_headers(self):
-        # 跨域
-        self.set_header('Access-Control-Allow-Origin', "*")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-        self.set_header('Access-Control-Max-Age', 1000)
-        self.set_header('Access-Control-Allow-Headers', '*')
     def check_origin(self, origin):
         return True
 
