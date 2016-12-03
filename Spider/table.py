@@ -33,13 +33,14 @@ class NewsTable(Table):
     def __init__(self, conn, spider_name, cache_size=None, is_created=False):
         self.table_name = 'news'
         create_stmt = 'create table if not exists ' + self.table_name + \
-                      ' (`id` INT NOT NULL AUTO_INCREMENT,' \
-                      '`url` VARCHAR(200)  NOT NULL,' \
-                      '`title` TEXT NOT NULL, ' \
+                      ' (`news_id` INT NOT NULL AUTO_INCREMENT,' \
+                      '`url` VARCHAR(250)  NOT NULL,' \
+                      '`title` VARCHAR(250) NOT NULL, ' \
+                      '`type` VARCHAR(100) NOT NULL, ' \
                       ' `visit_cnt`INT DEFAULT 0,' \
-                      '  PRIMARY KEY (id));'
+                      '  PRIMARY KEY (news_id));'
         insert_stmt = 'insert ignore into ' + self.table_name + \
-                      ' values(NULL,%s,%s,0);'
+                      ' values(NULL,%s,%s,%s,0);'
         Table.__init__(self, conn, spider_name, create_stmt, insert_stmt, cache_size, is_created)
 
 
