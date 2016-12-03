@@ -213,8 +213,7 @@ fail:
 ### 1.4 返回群聊话题
 **url**
 ```
-119.29.161.184:8000/topic?type
-(type 包括 sport movie music library game travel)
+119.29.161.184:8000/topic?type=[sport movie music library game travel]
 (随机返回十条数据，其中 sport movie game 数据是新闻 | travel 数据来自蝉游记 | music library 数据来自豆瓣250排行榜)
 ```
 
