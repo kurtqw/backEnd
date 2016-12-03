@@ -142,11 +142,12 @@ class Waiter(object):
         else:
             person1 = self.femalesWaiting.get()
             person2 = self.malesWaiting.get()
-        person1.returnId(person1.id)
-        person2.returnId(person2.id)
         chat = Chat(person1, person2)
         chattingList[person1.id] = chat
         chattingList[person2.id] = chat
+        person1.returnId(person1.id)
+        person2.returnId(person2.id)
+
 
 
 class MatchHandler(tornado.web.RequestHandler):
