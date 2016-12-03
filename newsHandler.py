@@ -18,7 +18,7 @@ class NewsHandler(tornado.web.RequestHandler):
 
         self.conn = pymysql.connect(host, username, password, db, charset='utf8')
         self.cur = self.conn.cursor()
-        self.select_stmt = 'select * from news order by visit_cnt desc'
+        self.select_stmt = 'select * from news where type="news" order by visit_cnt desc'
         self.size = self.cur.execute(self.select_stmt)
         l = list(range(0, self.size, 9))
         self.index = list(zip(l, l[1:]))
