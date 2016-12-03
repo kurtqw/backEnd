@@ -180,7 +180,7 @@ class MatchHandler(tornado.web.RequestHandler):
 class ChatHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         self.id = self.get_argument("id")
-        if id in chattingList.keys():
+        if self.id in chattingList.keys():
             chattingList[self.id].register(self.id, self)
 
     def on_message(self, data):
