@@ -154,6 +154,21 @@ class TopicHandler(tornado.web.RequestHandler):
         self.topic_type = ['sport', 'movie', 'game', 'travel', 'music', 'library']
         super(TopicHandler, self).__init__(application, request, **kargs)
 
+        def set_default_headers(self):
+        self.set_header('Access-Control-Allow-Credentials', "false")
+
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Credentials", "true")
+        self.set_header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
+        self.set_header("Access-Control-Allow-Headers",
+                        "Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, X-Requested-By, If-Modified-Since, X-File-Name, Cache-Control")
+
+    def check_origin(self, origin):
+        self.set_header('Access-Control-Allow-Origin', "*")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header('Access-Control-Max-Age', 1000)
+        self.set_header('Access-Control-Allow-Headers', '*')
+
     def get(self):
         topic_type = self.get_argument("type")
         if topic_type not in self.topic_type:
