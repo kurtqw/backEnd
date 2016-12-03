@@ -32,8 +32,8 @@ class NeteaseNewsSpider(object):
             for item in news_items:
                 url = item.get_attribute("href")
                 title = item.text
-                print(url+'\t'+title)
-                self.table.insert(url, title)
+                print(url + '\t' + title)
+                self.table.insert(url, title, 'news')
             self.driver.find_element_by_xpath("//div[@class='bar_pages']/a[@class='bar_pages_flip']").click()
 
     def __del__(self):
