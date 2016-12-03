@@ -184,7 +184,8 @@ class ChatHandler(tornado.websocket.WebSocketHandler):
             chattingList[self.id].register(self.id, self)
 
     def on_message(self, data):
-        chattingList[self.id].recMessage(json.loads(data))
+        if self.id in chattingList.keys():
+            chattingList[self.id].recMessage(json.loads(data))
 
     def on_close(self):
 
