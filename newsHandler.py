@@ -154,7 +154,8 @@ class TopicHandler(tornado.web.RequestHandler):
         self.topic_type = ['sport', 'movie', 'game', 'travel', 'music', 'library']
         super(TopicHandler, self).__init__(application, request, **kargs)
 
-        def set_default_headers(self):
+
+    def set_default_headers(self):
         self.set_header('Access-Control-Allow-Credentials', "false")
 
         self.set_header("Access-Control-Allow-Origin", "*")
