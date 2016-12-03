@@ -29,7 +29,7 @@ class GroupChatHandler(tornado.websocket.WebSocketHandler):
 
     def open(self):
         self.topic = self.get_argument("topic")
-        if self.topic not in ["sport", "movie", "sing", "library", "game", "music"]:
+        if self.topic not in ["sport", "movie", "travel", "library", "game", "music"]:
             #若不在设定主题内 则断开连接
             self.close()
         if self.topic not in self.application.groupChats.keys():
