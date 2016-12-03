@@ -69,6 +69,7 @@ class NewsHandler(tornado.web.RequestHandler):
     def post(self, *args, **kwargs):
         try:
             if isinstance(self.request.body, bytes):
+                print(self.request.body)
                 body = self.request.body.decode('utf-8')
                 request_body = json.loads(body)
             else:
@@ -105,7 +106,7 @@ class JokeHanlder(tornado.web.RequestHandler):
 
         self.conn = pymysql.connect(host, username, password, db, charset='utf8')
         self.cur = self.conn.cursor()
-        self.select_stmt = 'select content from joke'
+        self.select_stmt = 'select content from joke order by rand()'
         super(JokeHanlder, self).__init__(application, request, **kargs)
 
     def set_default_headers(self):
@@ -135,7 +136,36 @@ class JokeHanlder(tornado.web.RequestHandler):
         import random
         rand_index = random.randrange(0, len(items) - 1)
         print(items[rand_index][0])
-        self.write(json.dumps({'status': 1,'data':items[rand_index][0]}))
+        self.write(json.dumps({'status': 1, 'data': items[rand_index][0]}))
+
+
+class TopicHandler(tornado.web.RequestHandler):
+    def __init__(self, application, request, **kargs):
+        parser = configparser.ConfigParser()
+        parser.read('mysql.ini')
+        host = parser['CONFIG']['HOST']
+        username = parser['CONFIG']['USERNAME']
+        password = parser['CONFIG']['PASSWORD']
+        db = parser['CONFIG']['DB']
+
+        self.conn = pymysql.connect(host, username, password, db, charset='utf8')
+        self.cur = self.conn.cursor()
+        self.select_stmt = 'select url,title from news WHERE type="%s" order by rand() limit 10'
+        self.topic_type = ['sport', 'movie', 'game', 'travel', 'music', 'library']
+        super(TopicHandler, self).__init__(application, request, **kargs)
+
+    def get(self):
+        topic_type = self.get_argument("type")
+        if topic_type not in self.topic_type:
+            self.write(json.dumps({'status': 0, 'data': 'type not found'}))
+            return
+        select_stmt = self.select_stmt % topic_type
+        print(select_stmt)
+        self.cur.execute(select_stmt)
+        items = self.cur.fetchall()
+        data = [{'url': item[0], 'title': item[1]} for item in items]
+        print(data)
+        self.write(json.dumps({'status': 1, 'data': data}))
 
 # if __name__ == '__main__':
 #    n = NewsHandler()
