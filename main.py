@@ -2,7 +2,7 @@
 import random
 import time
 import tornado.ioloop
-from newsHandler import NewsHandler, JokeHanlder
+from newsHandler import NewsHandler, JokeHanlder, TopicHandler
 import tornado.web
 import tornado.httpserver
 import tornado.options
@@ -237,7 +237,8 @@ class Application(tornado.web.Application):
             (r"/chat", ChatHandler),
             (r"/name", NameHandler),
             (r"/news", NewsHandler),
-            (r"/joke", JokeHanlder)
+            (r"/joke", JokeHanlder),
+            (r"/topic", TopicHandler)
         ]
         super(Application, self).__init__(handlers)
 
