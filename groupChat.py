@@ -23,7 +23,7 @@ class GroupChatHandler(tornado.websocket.WebSocketHandler):
 
     def open(self):
         self.topic = self.get_argument("topic")
-        if self.topic not in ["体育", "电影", "音乐", "游戏", "唱K", "泡馆"]:
+        if self.topic not in ["sport", "movie", "sing", "library", "game", "music"]:
             #若不在设定主题内 则断开连接
             self.close()
         if self.topic not in self.application.groupChats.keys():
@@ -37,9 +37,9 @@ class GroupChatHandler(tornado.websocket.WebSocketHandler):
 
         #昵称
         index = random.randint(0, len(self.application.allNames) - 1)
-        while self.application.allnames[index]  in self.application.groupChats[self.topic].names:
+        while self.application.allNames[index]  in self.application.groupChats[self.topic].names:
             index = random.randint(0, len(self.application.allNames) - 1)
-        self.name = self.application.allnames[index]
+        self.name = self.application.allNames[index]
         self.application.groupChats[self.topic].names.add(self.name)
 
         #在GroupChat的people dict 中保存与id对应的write_message
@@ -49,11 +49,11 @@ class GroupChatHandler(tornado.websocket.WebSocketHandler):
         self.write_message(json.dumps({'status': 1, 'id': self.id, 'name': self.name}))
 
         #将该话题下原先的近20条记录发给用户
-        for record in self.application[self.topic].records:
+        for record in self.application.groupChats[self.topic].records[::-1]:
             self.write_message(record)
 
     def on_message(self, data):
-        message = Message(sender=self.name, data=data)
+        message = Message(sender=self.name, data=json.loads(data))
 
         #将消息发送给每个在群组里的人
         for key in self.application.groupChats[self.topic].people.keys():
