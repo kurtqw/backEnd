@@ -5,23 +5,15 @@ from selenium import webdriver
 from Spider.table import JokeTable
 import configparser
 import pymysql
+from Spider.TopicSpider import baseSpider
 
 
-class NeteaseNewsSpider(object):
-    def __init__(self):
-        parser = configparser.ConfigParser()
-        parser.read('mysql.ini')
-        parser.read('mysql.ini')
-        host = parser['CONFIG']['HOST']
-        username = parser['CONFIG']['USERNAME']
-        password = parser['CONFIG']['PASSWORD']
-        db = parser['CONFIG']['DB']
-        self.conn = pymysql.connect(host, username, password, db, charset='utf8')
-        self.cur = self.conn.cursor()
-        self.driver = webdriver.PhantomJS()
-        self.table = JokeTable(self.conn, 'qiushibaike', 1, False)
+class JokeSpider(baseSpider):
+    def __init__(self, name):
+        baseSpider.__init__(self, name)
 
     def parse(self):
+        self.table = JokeTable(self.conn, 'Joke', 1, False)
         url = 'http://www.qiushibaike.com/text/page/%d/?s=4934451'
         i = 1
         while i < 36:
@@ -39,5 +31,5 @@ class NeteaseNewsSpider(object):
 
 
 if __name__ == '__main__':
-    spider = NeteaseNewsSpider()
+    spider = JokeSpider('qiushibaike')
     spider.parse()

@@ -6,7 +6,7 @@ import pymysql
 
 
 class baseSpider(object):
-    def __init__(self):
+    def __init__(self, name):
         parser = configparser.ConfigParser()
         parser.read('mysql.ini')
         parser.read('mysql.ini')
@@ -17,7 +17,7 @@ class baseSpider(object):
         self.conn = pymysql.connect(host, username, password, db, charset='utf8')
         self.cur = self.conn.cursor()
         self.driver = webdriver.PhantomJS()
-        self.table = NewsTable(self.conn, 'topicSpider', 1, False)
+        self.table = NewsTable(self.conn, name, 1, False)
 
     def parse(self):
         pass
@@ -29,7 +29,7 @@ class baseSpider(object):
 
 class SportSpider(baseSpider):  # 体育新闻爬虫
     def __init__(self):
-        baseSpider.__init__(self)
+        baseSpider.__init__(self, 'Sport')
 
     def parse(self):
         url = 'http://sports.ifeng.com/'
@@ -50,7 +50,7 @@ class SportSpider(baseSpider):  # 体育新闻爬虫
 
 class MovieSpider(baseSpider):  # 电影新闻爬虫
     def __init__(self):
-        baseSpider.__init__(self)
+        baseSpider.__init__(self, 'Movie')
 
     def parse(self):
         url = 'http://ent.qq.com/movie/news_om.shtml'
@@ -72,7 +72,7 @@ class MovieSpider(baseSpider):  # 电影新闻爬虫
 
 class GameSpider(baseSpider):  # 游戏新闻爬虫
     def __init__(self):
-        baseSpider.__init__(self)
+        baseSpider.__init__(self, 'Game')
 
     def parse(self):
         url = 'http://play.163.com/'
@@ -96,7 +96,7 @@ class GameSpider(baseSpider):  # 游戏新闻爬虫
 
 class TravelSpider(baseSpider):  # 旅行新闻爬虫
     def __init__(self):
-        baseSpider.__init__(self)
+        baseSpider.__init__(self, 'Travel')
 
     def parse(self):
         raw_url = 'http://chanyouji.com/?page=%d'
@@ -116,7 +116,7 @@ class TravelSpider(baseSpider):  # 旅行新闻爬虫
 
 class DBSpider(baseSpider):
     def __init__(self):
-        baseSpider.__init__(self)
+        baseSpider.__init__(self, 'DB')
 
     def parse(self, raw_url, type):
         i = 0
