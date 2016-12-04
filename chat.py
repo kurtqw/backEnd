@@ -94,7 +94,7 @@ class Chat(object):
 
     def notifyClose(self, id):
         '''
-        当一方退出后，告知另一方并断开另一方的连接
+        当一方(id)退出后，告知另一方并断开另一方的连接
         TODO : 保存聊天记录
         :param id:主动断开的一方的ID
         :return:
@@ -102,7 +102,7 @@ class Chat(object):
         if chattingList[id].person1.id == id:
             chattingList[id].handler2.write_message("对方已断开")
             chattingList[id].handler2.close()
-        else:
+        elif chattingList[id].person2.id == id:
             chattingList[id].handler1.write_message("对方已断开")
             chattingList[id].handler1.close()
 
@@ -142,12 +142,12 @@ class Waiter(object):
         else:
             person1 = self.femalesWaiting.get()
             person2 = self.malesWaiting.get()
-        person1.returnId(person2.id)
-        person2.returnId(person1.id)
         chat = Chat(person1, person2)
         chattingList[person1.id] = chat
         chattingList[person2.id] = chat
-        print(person1.id, person2.id)
+        person1.returnId(person1.id)
+        person2.returnId(person2.id)
+
 
 
 class MatchHandler(tornado.web.RequestHandler):
@@ -180,25 +180,28 @@ class MatchHandler(tornado.web.RequestHandler):
 class ChatHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         self.id = self.get_argument("id")
-        chattingList[self.id].register(self.id, self)
+        if self.id in chattingList.keys():
+            chattingList[self.id].register(self.id, self)
 
     def on_message(self, data):
-        chattingList[self.id].recMessage(json.loads(data))
+        if self.id in chattingList.keys():
+            chattingList[self.id].recMessage(json.loads(data))
 
     def on_close(self):
 
-        if self.id in chattingList.keys() and not chattingList[self.id].isClose:
-            print("一方退出")
-            chattingList[self.id].isClose = True
-            chattingList[self.id].notifyClose(self.id)
-            if chattingList[self.id].person1.id == self.id:
-                anotherId = chattingList[self.id].person2.id
-            else:
-                anotherId = chattingList[self.id].person1.id
-            self.application.idSet.remove(self.id)
-            self.application.idSet.remove(anotherId)
-            chattingList.pop(self.id)
-            chattingList.pop(anotherId)
+        if self.id in chattingList.keys():
+            if not chattingList[self.id].isClose:
+                print("一方退出")
+                chattingList[self.id].isClose = True
+                chattingList[self.id].notifyClose(self.id)
+                if chattingList[self.id].person1.id == self.id:
+                    anotherId = chattingList[self.id].person2.id
+                else:
+                    anotherId = chattingList[self.id].person1.id
+                self.application.idSet.remove(self.id)
+                self.application.idSet.remove(anotherId)
+                chattingList.pop(self.id)
+                chattingList.pop(anotherId)
 
         else:
             print("另一方也退出")
@@ -219,9 +222,9 @@ class OtherNameHandler(tornado.web.RequestHandler):
         res = Result()
         if id in chattingList.keys():
             if id == chattingList[id].person1.id:
-                self.write(json.dumps({'other':chattingList[id].person1.name,'mine':chattingList[id].person2.name,'status':1}))
-            else:
                 self.write(json.dumps({'other':chattingList[id].person2.name,'mine':chattingList[id].person1.name,'status':1}))
+            elif id == chattingList[id].person2.id:
+                self.write(json.dumps({'other':chattingList[id].person1.name,'mine':chattingList[id].person2.name,'status':1}))
 
 class NameHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
@@ -252,9 +255,5 @@ class NameHandler(tornado.web.RequestHandler):
                 names[index] = self.application.femaleNames[index]
         res.setData(names)
         self.write(res.getRes())
-
-
-
-
 
 
